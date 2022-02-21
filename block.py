@@ -5,6 +5,7 @@ from mitmproxy.proxy.layers import tls
 import re2
 
 from plugins import bili
+from plugins import youtube
 
 
 # def next_layer(data: layer.NextLayer):
@@ -27,6 +28,14 @@ def tls_clienthello(data: tls.ClientHelloData):
 def request(flow: http.HTTPFlow) -> None:
     if flow.request.pretty_host.startswith(bili.DNS_HOST):
         bili.process_http_dns(flow)
+    elif youtube.REJECT_RE.match(flow.request.pretty_url):
+        # print(flow.request.pretty_url)
+        flow.kill()
+    elif flow.request.pretty_host.endswith(".googlevideo.com"):
+        if youtube.REDIRECT_RE.search(flow.request.pretty_url):
+            redirect_url = youtube.REDIRECT_RE.sub('ctier=A', flow.request.pretty_url)
+            flow.request.url = redirect_url
+            print(flow.request.pretty_url)
 
 
 def response(flow: http.HTTPFlow):
