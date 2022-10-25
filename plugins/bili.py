@@ -137,7 +137,7 @@ def process_response(flow: http.HTTPFlow):
             elif not item.get('ad_info', False) \
                 and item.get('card_goto', "").find('ad') < 0 \
                 and (
-                    item['card_type'] in ['small_cover_v2', 'large_cover_v1']):
+                    item['card_type'] in ['small_cover_v2', 'large_cover_v1', 'large_cover_single_v9']):
                 items.append(item)
 
         obj['data']['items'] = items
